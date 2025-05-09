@@ -1,22 +1,20 @@
 #In this analysis I am querying data from a database with multiple tables in it to quantify statistics about customers orders and data.
 
-#How many orders were placed in January?
-SELECT COUNT(orderID)
+#How many unique orders were placed in January?
+SELECT COUNT(DISTINCT orderID)
 FROM BIT_DB.JanSales
 WHERE length(orderID) =6
 AND orderID <> 'Order ID';
 
 #How many of those orders were for an iPhone?
-SELECT COUNT(orderid)
+SELECT COUNT(Product)
 FROM BIT_DB.JanSales
 WHERE product= 'iPhone'
 AND length(orderid) = 6
 AND orderid <> 'Order ID';
 
 #Select the customer account numbers for all the orders that were placed in February.
-SELECT * FROM BIT_DB.FebSales;
-SELECT * FROM BIT_DB.customers;
-SELECT distinct acctnum
+SELECT distinct cust.acctnum
 FROM BIT_DB.customers cust
 JOIN BIT_DB.FebSales Feb
 ON cust.order_id = Feb.orderid
@@ -34,7 +32,6 @@ FROM BIT_DB.JanSales
 GROUP BY product;
 
 #Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
-SELECT * FROM BIT_DB.FebSales;
 SELECT product, SUM(quantity), SUM(quantity)*price as revenue
 FROM BIT_DB.FebSales
 WHERE location ='548 Lincoln St, Seattle, WA 98101'
