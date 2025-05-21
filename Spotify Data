@@ -35,7 +35,7 @@ ORDER BY ROUND(danceability) desc
 LIMIT 10; 
 
 #WHO ARE THE TOP 5 Most Popular Artists
-SELECT artist_name,AVG(popularity)
+SELECT artist_name,popularity
 FROM BIT_DB.Spotifydata
 GROUP BY artist_name
 ORDER BY popularity desc
