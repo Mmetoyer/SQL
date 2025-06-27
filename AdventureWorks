@@ -1,0 +1,150 @@
+#1.How many companies have an address in the US state of Colorado?
+
+#2.AdventureWorks management wants to know how many high-priced units we have sold, versus low-priced units. They have asked you to pull the unit prices and order quantities from the SalesOrderDetail table and group them into the following ranges:
+, $0-99 dollars, $100-999 dollars, $1000+ dollars. How many units have we sold that are valued at $1,000 or more?
+WITH CTE AS (
+SELECT p.name
+	,s.orderqty
+	,CASE WHEN s.unitprice >=1000 THEN '$1000+ dollars'
+		WHEN s.unitprice >=100 THEN '$100-999 dollars'
+		WHEN s.unitprice >= 0 THEN '$0-99 dollars'
+		ELSE 'N/A'
+		END AS Pricing_Values
+		FROM salesorderdetail s
+	JOIN product p
+		ON s.productid= p.productid
+)
+
+SELECT SUM(CTE.orderqty) AS Total_Ordered
+	,CTE.Pricing_Values
+FROM CTE
+GROUP BY Pricing_Values 
+ORDER BY Pricing_Values desc
+
+#3.How many units in Product Category 'Cranksets' have been shipped to an address in London, England?
+WITH CTE AS 
+(SELECT
+	SUM(sd.orderqty) AS TOTALSUM
+FROM address a
+JOIN salesorderheader s
+	ON s.shiptoaddressid= a.addressid
+JOIN salesorderdetail sd
+	ON sd.salesorderid =s.salesorderid
+JOIN product p
+	ON sd.productid = p.productid
+	JOIN productcategory pc
+	ON p.productcategoryid = pc.productcategoryid
+WHERE a.city ='London'
+AND pc.name ='Cranksets'
+GROUP BY sd.salesorderid
+)
+
+SELECT SUM(TOTALSUM)
+FROM CTE
+
+
+#4.Which company from our customers has spent over $90 on the Racing Socks product model?
+
+WITH CTE AS (
+SELECT s.salesorderid,c.companyname, SUM(sd.linetotal) AS TOTALSUM 
+FROM salesorderheader s
+  JOIN salesorderdetail sd
+    ON s.salesorderid = sd.salesorderid
+  JOIN customer c
+    ON s.customerid = c.customerid
+  JOIN product p
+    ON sd.productid =p.productid
+  JOIN productmodel pm
+    ON p.productmodelid = pm.productmodelid
+WHERE p.name LIKE '%Racing Socks%'
+GROUP BY s.salesorderid,c.companyname
+)
+
+SELECt DISTINCT companyname
+FROM CTE
+WHERE TOTALSUM >=90
+GROUP BY companyname
+
+#5.Use either RANK() or DENSE_RANK() to create a list of companies that ranks them by the quantity of units (SalesOrderDetail.OrderQty) sold by AdventureWorks.
+#Select all companies that are tied for 10th place according to total quantity sold.
+
+WITH CTE AS (
+SELECT c.companyname, SUM(s.orderqty) AS TOTAL_UNITS_SOLD
+FROM customer c
+	JOIN salesorderheader sh
+		ON c.customerid = sh.customerid
+	JOIN salesorderdetail s
+		ON sh.salesorderid = s.salesorderid
+GROUP BY c.companyname
+)
+
+SELECT companyname
+	,DENSE_RANK () OVER (ORDER BY TOTAL_UNITS_SOLD DESC) AS COMP_RANK
+FROM CTE
+
+#6.How many companies are based in the United Kingdom?
+
+SELECT COUNT (DISTINCT companyname)
+FROM customer c
+ 	JOIN customeraddress ca
+		ON c.customerid = ca.customerid
+	JOIN address a
+		ON ca.addressid = a.addressid
+WHERE a.countryregion ='United Kingdom'
+
+#7.How many companies in our database have more than one address?
+
+SELECT DISTINCT c.companyname, COUNT(a.addressid) AS NumofAddresses
+FROM customer c
+	JOIN customeraddress ca
+		ON c.customerid = ca.customerid
+	JOIN address a
+		ON ca.addressid = a.addressid
+GROUP BY c.customerid
+HAVING COUNT(a.addressid) >1
+
+#8.What is the first name of the customer with company name “Alpine Ski House?”
+
+SELECT firstname
+FROM customer
+WHERE companyname ='Alpine Ski House'
+
+#9.How many AdventureWorks customers go by the title of “Mr."?
+
+SELECT COUNT(title)
+FROM customer
+WHERE title='Mr.'
+GROUP BY title
+
+#10.Which salesperson in the customer table represents the LEAST number of customers?
+
+SELECT COUNT(customerid) AS Num_of_Customers
+	,salesperson
+FROM customer
+GROUP BY salesperson
+ORDER BY Num_of_Orders
+LIMIT 1
+
+
+#11.Which of the company names appears multiple times in our customer table?
+
+SELECT COUNT(customerid) AS Num_of_Orders
+	,companyname
+FROM customer
+GROUP BY companyname
+ORDER BY Num_of_Orders desc
+
+#12.Which customer has the MOST RECENT modified date in the customer table?
+
+SELECT firstname
+	,lastname
+FROM customer
+WHERE modifieddate = (SELECT MAX(modifieddate) FROM customer)
+
+#13.How many company names in our customer table contain the word "bike"?
+
+SELECT COUNT (DISTINCT companyname)
+FROM customer
+WHERE LOWER (companyname) LIKE '%bike%'
+
+
