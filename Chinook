@@ -1,0 +1,52 @@
+SELECT * FROM chinook.customers;
+SELECT CustomerId, FirstName, LastName, Country
+FROM chinook.customers
+WHERE Country <> 'USA';
+
+SELECT CustomerId, FirstName, LastName
+FROM chinook.customers
+WHERE Country ='Brazil';
+
+--Find the Invoices of customers who are from Brazil. 
+--customer's full name, Invoice ID, Date of the invoice, and billing country.
+SELECT * FROM chinook.invoices;
+SELECT c.FirstName, c.LastName, i.InvoiceId, i.InvoiceDate, i.BillingCountry
+FROM chinook.customers c
+JOIN chinook.invoices i
+ON c.Customerid = i.Customerid
+WHERE c.Country ='Brazil';
+
+--Show the Employees who are Sales Agents.
+SELECT * FROM chinook.employees;
+SELECT Employeeid, FirstName,LastName
+FROM chinook.employees
+WHERE Title LIKE 'Sales%Agent';
+
+--Find a unique/distinct list of billing countries from the Invoice table.
+SELECT * FROM chinook.invoices;
+SELECT DISTINCT BillingCountry
+FROM chinook.invoices;
+
+SELECT i.Invoiceid, i.InvoiceDate, i.Total, e.FirstName, e.LastName
+FROM chinook.invoices i
+JOIN chinook.customers c
+ON I.Customerid = c.Customerid
+JOIN chinook.employees e
+ON c.SupportRepid = e.Employeeid
+WHERE e.Title LIKE 'Sales%Agent'
+ORDER BY i.Invoiceid;SELECT i.Invoiceid, i.InvoiceDate, i.Total, e.FirstName, e.LastName
+FROM chinook.invoices i
+JOIN chinook.customers c
+ON I.Customerid = c.Customerid
+JOIN chinook.employees e
+ON c.SupportRepid = e.Employeeid
+WHERE e.Title LIKE 'Sales%Agent'
+ORDER BY i.Invoiceid;
+
+
+SELECT c.FirstName, c.LastName, i.Total,c.Country,e.LastName, e.FirstName
+FROM chinook.invoices i
+    JOIN chinook.customers c
+    ON c.Customerid = i.Customerid
+    JOIN chinook.employees e
+    ON c.SupportRepid = e.Employeeid;
