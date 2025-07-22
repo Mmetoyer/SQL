@@ -50,3 +50,68 @@ FROM chinook.invoices i
     ON c.Customerid = i.Customerid
     JOIN chinook.employees e
     ON c.SupportRepid = e.Employeeid;
+
+--How many Invoices were there in 2009?
+
+ SELECT COUNT(InvoiceId)
+ FROM chinook.invoices
+ WHERE InvoiceDate LIKE '2009%';
+
+
+--What are the total sales for 2009?
+SELECT ROUND(SUM(Total),2) AS Total_Sales
+FROM chinook.invoices
+WHERE InvoiceDate LIKE '2009%';
+
+--Write a query that includes the purchased track name with each invoice line ID.
+
+SELECT i.InvoiceLineid,t.name
+FROM chinook.tracks t
+JOIN chinook.invoice_items i
+ON t.Trackid = i.Trackid
+ORDER BY i.InvoiceLineid; 
+
+--Write a query that includes the purchased track name AND artist name with each invoice line ID
+SELECT i.InvoiceLineid,t.name, a.Name
+FROM chinook.tracks t
+JOIN chinook.invoice_items i
+ON t.Trackid = i.Trackid
+JOIN chinook.albums al
+ON t.Albumid = al.Albumid
+JOIN chinook.artists a
+ON a.Artistid = al.Artistid
+ORDER BY i.InvoiceLineid; 
+
+--Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT t.Name AS Track_Name, a.Title AS Album,m.Name AS Type, g.Name AS Genre
+FROM chinook.tracks t
+JOIN chinook.albums a
+ON t.Albumid = a.AlbumId
+JOIN chinook.media_types m
+ON t.MediaTypeid = m.MediaTypeId
+JOIN chinook.genres g
+ON t.Genreid = g.GenreId;
+--Show the total sales made by each sales agent.
+
+SELECT ROUND(SUM(i.Total),2) AS Total_Sales, e.FirstName, e.LastName
+FROM chinook.employees e
+JOIN chinook.customers c
+ON e.Employeeid = c.SupportRepId
+JOIN chinook.invoices i
+ON i.CustomerId = c.CustomerId
+GROUP BY e.FirstName, e.LastName
+HAVING e.Title LIKE 'Sales%Agent';
+
+--Which sales agent made the most dollars in sales in 2009?
+
+SELECT ROUND(SUM(i.Total),2) AS Total_Sales, e.FirstName, e.LastName
+FROM chinook.employees e
+JOIN chinook.customers c
+ON e.Employeeid = c.SupportRepId
+JOIN chinook.invoices i
+ON i.CustomerId = c.CustomerId
+GROUP BY e.FirstName, e.LastName
+HAVING e.Title LIKE 'Sales%Agent'
+AND I.InvoiceDate LIKE '2009%'
+ORDER BY Total_Sales DESC LIMIT 1;
