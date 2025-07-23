@@ -33,14 +33,8 @@ FROM chinook.invoices;
 ##Provide a query that shows the invoices associated with each sales agent. The 
 resulting table should include the Sales Agent's full name.
 
-SELECT i.Invoiceid, i.InvoiceDate, i.Total, e.FirstName, e.LastName
-FROM chinook.invoices i
-JOIN chinook.customers c
-ON I.Customerid = c.Customerid
-JOIN chinook.employees e
-ON c.SupportRepid = e.Employeeid
-WHERE e.Title LIKE 'Sales%Agent'
-ORDER BY i.Invoiceid;SELECT i.Invoiceid, i.InvoiceDate, i.Total, e.FirstName, e.LastName
+
+SELECT i.Invoiceid, e.FirstName, e.LastName
 FROM chinook.invoices i
 JOIN chinook.customers c
 ON I.Customerid = c.Customerid
