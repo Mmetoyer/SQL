@@ -1,6 +1,4 @@
-#1.How many companies have an address in the US state of Colorado?
-
-#2.AdventureWorks management wants to know how many high-priced units we have sold, versus low-priced units. They have asked you to pull the unit prices and order quantities from the SalesOrderDetail table and group them into the following ranges:
+#1.AdventureWorks management wants to know how many high-priced units we have sold, versus low-priced units. They have asked you to pull the unit prices and order quantities from the SalesOrderDetail table and group them into the following ranges:
 , $0-99 dollars, $100-999 dollars, $1000+ dollars. How many units have we sold that are valued at $1,000 or more?
 WITH CTE AS (
 SELECT p.name
@@ -21,7 +19,7 @@ FROM CTE
 GROUP BY Pricing_Values 
 ORDER BY Pricing_Values desc
 
-#3.How many units in Product Category 'Cranksets' have been shipped to an address in London, England?
+#2.How many units in Product Category 'Cranksets' have been shipped to an address in London, England?
 WITH CTE AS 
 (SELECT
 	SUM(sd.orderqty) AS TOTALSUM
@@ -43,7 +41,7 @@ SELECT SUM(TOTALSUM)
 FROM CTE
 
 
-#4.Which company from our customers has spent over $90 on the Racing Socks product model?
+#3.Which company from our customers has spent over $90 on the Racing Socks product model?
 
 WITH CTE AS (
 SELECT s.salesorderid,c.companyname, SUM(sd.linetotal) AS TOTALSUM 
@@ -65,7 +63,7 @@ FROM CTE
 WHERE TOTALSUM >=90
 GROUP BY companyname
 
-#5.Use either RANK() or DENSE_RANK() to create a list of companies that ranks them by the quantity of units (SalesOrderDetail.OrderQty) sold by AdventureWorks.
+#4.Use either RANK() or DENSE_RANK() to create a list of companies that ranks them by the quantity of units (SalesOrderDetail.OrderQty) sold by AdventureWorks.
 #Select all companies that are tied for 10th place according to total quantity sold.
 
 WITH CTE AS (
@@ -82,7 +80,7 @@ SELECT companyname
 	,DENSE_RANK () OVER (ORDER BY TOTAL_UNITS_SOLD DESC) AS COMP_RANK
 FROM CTE
 
-#6.How many companies are based in the United Kingdom?
+#5.How many companies are based in the United Kingdom?
 
 SELECT COUNT (DISTINCT companyname)
 FROM customer c
@@ -92,7 +90,7 @@ FROM customer c
 		ON ca.addressid = a.addressid
 WHERE a.countryregion ='United Kingdom'
 
-#7.How many companies in our database have more than one address?
+#6.How many companies in our database have more than one address?
 
 SELECT DISTINCT c.companyname, COUNT(a.addressid) AS NumofAddresses
 FROM customer c
@@ -103,20 +101,20 @@ FROM customer c
 GROUP BY c.customerid
 HAVING COUNT(a.addressid) >1
 
-#8.What is the first name of the customer with company name “Alpine Ski House?”
+#7.What is the first name of the customer with company name “Alpine Ski House?”
 
 SELECT firstname
 FROM customer
 WHERE companyname ='Alpine Ski House'
 
-#9.How many AdventureWorks customers go by the title of “Mr."?
+#8.How many AdventureWorks customers go by the title of “Mr."?
 
 SELECT COUNT(title)
 FROM customer
 WHERE title='Mr.'
 GROUP BY title
 
-#10.Which salesperson in the customer table represents the LEAST number of customers?
+#9.Which salesperson in the customer table represents the LEAST number of customers?
 
 SELECT COUNT(customerid) AS Num_of_Customers
 	,salesperson
@@ -126,7 +124,7 @@ ORDER BY Num_of_Orders
 LIMIT 1
 
 
-#11.Which of the company names appears multiple times in our customer table?
+#10.Which of the company names appears multiple times in our customer table?
 
 SELECT COUNT(customerid) AS Num_of_Orders
 	,companyname
@@ -134,14 +132,14 @@ FROM customer
 GROUP BY companyname
 ORDER BY Num_of_Orders desc
 
-#12.Which customer has the MOST RECENT modified date in the customer table?
+#11.Which customer has the MOST RECENT modified date in the customer table?
 
 SELECT firstname
 	,lastname
 FROM customer
 WHERE modifieddate = (SELECT MAX(modifieddate) FROM customer)
 
-#13.How many company names in our customer table contain the word "bike"?
+#12.How many company names in our customer table contain the word "bike"?
 
 SELECT COUNT (DISTINCT companyname)
 FROM customer
